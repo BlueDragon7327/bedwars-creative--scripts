@@ -1,0 +1,39 @@
+local Users = {"Entity_Herobrine999"} -- Your username 
+local EnableMessage = "/e fly on" -- The message to enable your fly
+local DisableMessage = "/e fly off" -- The message to disable your fly
+local Speed = 1 -- To change the speed, lower or higher this number.
+
+local Exploiters = {}
+local Enabled = {}
+
+for _, Player in pairs(PlayerService.getPlayers()) do
+    for _, User in pairs(Users) do
+        if User == Player.name then
+            Exploiters[Player] = true
+            Enabled[Player] = false
+        end
+    end
+end
+
+function Enable(Player, Respawn)
+    Player:registerSpeedMultiplier("Fly_".. Player.name, 10 * Speed)
+    Player:registerAdditionalAirJumps("Fly_".. Player.name, 100000000000000000)
+end
+
+function Disable(Player)
+    Player:removeSpeedMultiplier("Fly_".. Player.name)
+    Player:removeAdditionalAirJumps("Fly_".. Player.name)
+end
+
+Events.PlayerChatted(function(event)
+    local Player = event.player
+    local Message = event.message
+
+    if (Exploiters[Player]) then
+        if (string.lower(Message) == string.lower(EnableMessage)) and (Enabled[Player] == false) then
+            Enable(Player)
+        elseif (string.lower(Message) == string.lower(DisableMessage)) then
+            Disable(Player)
+        end
+    end
+end)
