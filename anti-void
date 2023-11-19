@@ -1,0 +1,42 @@
+local User = "Entity_Herobrine999" -- your user here
+local Position = 0
+local OldPosition = Vector3.new()
+
+local Player = nil
+for _, player in pairs(PlayerService.getPlayers()) do
+    if player.name == User then
+        Player = player
+    end
+end
+
+Position = Player:getEntity():getPosition().Y - 20
+
+task.spawn(function ()
+    while task.wait(0.1) do
+        local Entity = Player:getEntity()
+        
+        if (not Entity) then
+            continue
+        end
+
+        local CurrentPostion = Entity:getPosition()
+
+        if (not CurrentPostion) then
+            continue
+        end
+
+        if (CurrentPostion.Y < Position) then
+            Entity:setPosition(OldPosition)
+        else
+            local BlockBelow = BlockService.getBlockAt(CurrentPostion - Vector3.new(0, 5, 0))
+
+            if (BlockBelow) then
+                OldPosition = CurrentPostion
+            end
+        end
+    end
+end)
+
+Events.MatchStart(function (event)
+    Position = Player:getEntity():getPosition().Y - 20
+end)
